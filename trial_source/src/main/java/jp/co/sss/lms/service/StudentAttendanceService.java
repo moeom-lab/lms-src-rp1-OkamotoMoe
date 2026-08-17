@@ -1,7 +1,6 @@
 package jp.co.sss.lms.service;
 
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -340,7 +339,7 @@ public class StudentAttendanceService {
 	 */
 	public Boolean notEnterCheck()throws ParseException{
 		//日付取得
-		LocalDate today =LocalDate.now();
+//		LocalDate today =LocalDate.now();
 		
 		Date trainingDate = attendanceUtil.getTrainingDate();
 		
