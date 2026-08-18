@@ -87,12 +87,14 @@
 			const hours = ('0' + today.getHours()).slice(-2);
 			const minutes = ('0' + today.getMinutes()).slice(-2);
 			return hours + ':' + minutes;
-			}
+		}
 
 	</script>
 
 	<script type="text/javascript" th:inline="javascript" th:if="${notEnterCount == true}">
-		alert('過去日の勤怠に未入力があります。');
+		window.onload = function () {
+			alert('過去日の勤怠に未入力があります。');
+		};
 	</script>
 
 
