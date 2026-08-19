@@ -146,5 +146,33 @@ public class AttendanceUtil {
 		}
 		return false;
 	}
+	
+	/**
+	 * 1時間刻みの時間の取得
+	 */
+	public LinkedHashMap<Integer, String> getHourMap(){
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "");
+		for(int i = 0; i < 24; i++) {
+			String hour = String.format("%02d", i);
+			map.put(i, hour);
+		}
+		
+		return map;
+	}
+	
+	/**
+	 * 1分刻みの時間の取得
+	 */
+	public LinkedHashMap<Integer, String> getMinuteMap(){
+		LinkedHashMap<Integer, String> map = new LinkedHashMap<>();
+		map.put(null, "");
+		for(int i = 0; i < 60; i++) {
+			String min = String.format("%02d", i);
+			map.put(i, min);
+		}
+		
+		return map;
+	}
 
 }

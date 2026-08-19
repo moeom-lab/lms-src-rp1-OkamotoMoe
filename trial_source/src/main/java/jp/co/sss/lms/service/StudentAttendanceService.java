@@ -3,6 +3,7 @@ package jp.co.sss.lms.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -219,6 +220,8 @@ public class StudentAttendanceService {
 		attendanceForm.setUserName(loginUserDto.getUserName());
 		attendanceForm.setLeaveFlg(loginUserDto.getLeaveFlg());
 		attendanceForm.setBlankTimes(attendanceUtil.setBlankTime());
+		attendanceForm.setTimeHh(attendanceUtil.getHourMap());
+		attendanceForm.setTimeMi(attendanceUtil.getMinuteMap());
 
 		// 途中退校している場合のみ設定
 		if (loginUserDto.getLeaveDate() != null) {
@@ -252,6 +255,63 @@ public class StudentAttendanceService {
 			dailyAttendanceForm.setStatusDispName(attendanceManagementDto.getStatusDispName());
 
 			attendanceForm.getAttendanceList().add(dailyAttendanceForm);
+		}
+
+		//時間マップ
+		LinkedHashMap<Integer, String> timeHh = new LinkedHashMap<>();
+		timeHh.put(null, "");
+
+		int i;
+		for (i = 0; i < 24; i++) {
+			timeHh.put(i, String.format("%02d", i));
+		}
+
+		//分マップ
+		LinkedHashMap<Integer, String> timeMi = new LinkedHashMap<>();
+		timeMi.put(null, "");
+
+		for (i = 0; i < 60; i++) {
+			timeHh.put(i, String.format("%02d", i));
+		}
+
+		for (AttendanceManagementDto attendanceManagementDto : attendanceManagementDtoList) {
+			DailyAttendanceForm dailyAttendanceForm = new DailyAttendanceForm();
+			dailyAttendanceForm
+					.setStudentAttendanceId(attendanceManagementDto.getStudentAttendanceId());
+			dailyAttendanceForm
+					.setTrainingDate(dateUtil.toString(attendanceManagementDto.getTrainingDate()));
+			//開始時
+			String startTimeString = attendanceManagementDto.getTrainingStartTime();
+			if (startTimeString != null && !startTimeString.isEmpty()) {
+				int startHour = Integer.parseInt(startTimeString.substring(0, 2));
+				dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+				//開始分
+				int startMinute = Integer.parseInt(startTimeString.substring(3, 5));
+				dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
+			}
+			//退勤時
+			String endTimeString = attendanceManagementDto.getTrainingEndTime();
+			if (endTimeString != null && !endTimeString.isEmpty()) {
+				int endHour = Integer.parseInt(endTimeString.substring(0, 2));
+				dailyAttendanceForm.setTrainingEndTimeHour(endHour);
+				//退勤分
+				int endMinute = Integer.parseInt(endTimeString.substring(3, 5));
+				dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
+			}
+
+			if (attendanceManagementDto.getBlankTime() != null) {
+				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
+				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
+						attendanceUtil.calcBlankTime(attendanceManagementDto.getBlankTime())));
+			}
+			dailyAttendanceForm.setStatus(String.valueOf(attendanceManagementDto.getStatus()));
+			dailyAttendanceForm.setNote(attendanceManagementDto.getNote());
+			dailyAttendanceForm.setSectionName(attendanceManagementDto.getSectionName());
+			dailyAttendanceForm.setIsToday(attendanceManagementDto.getIsToday());
+			dailyAttendanceForm.setDispTrainingDate(dateUtil
+					.dateToString(attendanceManagementDto.getTrainingDate(), "yyyy年M月d日(E)"));
+			dailyAttendanceForm.setStatusDispName(attendanceManagementDto.getStatusDispName());
+
 		}
 
 		return attendanceForm;
@@ -333,24 +393,46 @@ public class StudentAttendanceService {
 		// 完了メッセージ
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
-	
+
 	/**
 	 * 勤怠未入力チェック処理
 	 */
-	public Boolean notEnterCheck()throws ParseException{
+	public Boolean notEnterCheck() throws ParseException {
 		//日付取得
-//		LocalDate today =LocalDate.now();
-		
+		//		LocalDate today =LocalDate.now();
+
 		Date trainingDate = attendanceUtil.getTrainingDate();
-		
-		int notEnterCount = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(), 
+
+		int notEnterCount = tStudentAttendanceMapper.notEnterCount(loginUserDto.getLmsUserId(),
 				Constants.DB_FLG_FALSE, trainingDate);
-		
-		if(notEnterCount > 0) {
+
+		if (notEnterCount > 0) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
-		
+
+	}
+
+	/**
+	 * 日時フォーマット変換
+	 * @param attendanceForm
+	 */
+	public void formatConversion(AttendanceForm attendanceForm) {
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getAttendanceList()) {
+			if (dailyAttendanceForm.getTrainingStartTimeHour() != null
+					&& dailyAttendanceForm.getTrainingStartTimeMinute() != null) {
+				int startHour = dailyAttendanceForm.getTrainingStartTimeHour();
+				int startMinute = dailyAttendanceForm.getTrainingStartTimeMinute();
+				dailyAttendanceForm.setTrainingStartTime(String.format("%02d:%02d", startHour, startMinute));
+			}
+
+			if (dailyAttendanceForm.getTrainingEndTimeHour() != null
+					&& dailyAttendanceForm.getTrainingEndTimeMinute() != null) {
+				int endHour = dailyAttendanceForm.getTrainingEndTimeHour();
+				int endMinute = dailyAttendanceForm.getTrainingEndTimeMinute();
+				dailyAttendanceForm.setTrainingEndTime(String.format("%02d:%02d", endHour, endMinute));
+			}
+		}
 	}
 }
