@@ -241,6 +241,27 @@ public class StudentAttendanceService {
 			dailyAttendanceForm
 					.setTrainingStartTime(attendanceManagementDto.getTrainingStartTime());
 			dailyAttendanceForm.setTrainingEndTime(attendanceManagementDto.getTrainingEndTime());
+			
+			//開始時
+			String startTimeString = attendanceManagementDto.getTrainingStartTime();
+			if (startTimeString != null && !startTimeString.isEmpty()) {
+				int startHour = Integer.parseInt(startTimeString.substring(0, 2));
+				dailyAttendanceForm.setTrainingStartTimeHour(startHour);
+				//開始分
+				int startMinute = Integer.parseInt(startTimeString.substring(3, 5));
+				dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
+			}
+			
+			//退勤時
+			String endTimeString = attendanceManagementDto.getTrainingEndTime();
+			if (endTimeString != null && !endTimeString.isEmpty()) {
+				int endHour = Integer.parseInt(endTimeString.substring(0, 2));
+				dailyAttendanceForm.setTrainingEndTimeHour(endHour);
+				//退勤分
+				int endMinute = Integer.parseInt(endTimeString.substring(3, 5));
+				dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
+			}
+			
 			if (attendanceManagementDto.getBlankTime() != null) {
 				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
 				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
@@ -271,47 +292,7 @@ public class StudentAttendanceService {
 		timeMi.put(null, "");
 
 		for (i = 0; i < 60; i++) {
-			timeHh.put(i, String.format("%02d", i));
-		}
-
-		for (AttendanceManagementDto attendanceManagementDto : attendanceManagementDtoList) {
-			DailyAttendanceForm dailyAttendanceForm = new DailyAttendanceForm();
-			dailyAttendanceForm
-					.setStudentAttendanceId(attendanceManagementDto.getStudentAttendanceId());
-			dailyAttendanceForm
-					.setTrainingDate(dateUtil.toString(attendanceManagementDto.getTrainingDate()));
-			//開始時
-			String startTimeString = attendanceManagementDto.getTrainingStartTime();
-			if (startTimeString != null && !startTimeString.isEmpty()) {
-				int startHour = Integer.parseInt(startTimeString.substring(0, 2));
-				dailyAttendanceForm.setTrainingStartTimeHour(startHour);
-				//開始分
-				int startMinute = Integer.parseInt(startTimeString.substring(3, 5));
-				dailyAttendanceForm.setTrainingStartTimeMinute(startMinute);
-			}
-			//退勤時
-			String endTimeString = attendanceManagementDto.getTrainingEndTime();
-			if (endTimeString != null && !endTimeString.isEmpty()) {
-				int endHour = Integer.parseInt(endTimeString.substring(0, 2));
-				dailyAttendanceForm.setTrainingEndTimeHour(endHour);
-				//退勤分
-				int endMinute = Integer.parseInt(endTimeString.substring(3, 5));
-				dailyAttendanceForm.setTrainingEndTimeMinute(endMinute);
-			}
-
-			if (attendanceManagementDto.getBlankTime() != null) {
-				dailyAttendanceForm.setBlankTime(attendanceManagementDto.getBlankTime());
-				dailyAttendanceForm.setBlankTimeValue(String.valueOf(
-						attendanceUtil.calcBlankTime(attendanceManagementDto.getBlankTime())));
-			}
-			dailyAttendanceForm.setStatus(String.valueOf(attendanceManagementDto.getStatus()));
-			dailyAttendanceForm.setNote(attendanceManagementDto.getNote());
-			dailyAttendanceForm.setSectionName(attendanceManagementDto.getSectionName());
-			dailyAttendanceForm.setIsToday(attendanceManagementDto.getIsToday());
-			dailyAttendanceForm.setDispTrainingDate(dateUtil
-					.dateToString(attendanceManagementDto.getTrainingDate(), "yyyy年M月d日(E)"));
-			dailyAttendanceForm.setStatusDispName(attendanceManagementDto.getStatusDispName());
-
+			timeMi.put(i, String.format("%02d", i));
 		}
 
 		return attendanceForm;

@@ -46,7 +46,7 @@ public class AttendanceController {
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
 				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
 		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-		
+
 		Boolean notEnterCount = studentAttendanceService.notEnterCheck();
 		model.addAttribute("notEnterCount", notEnterCount);
 
@@ -118,8 +118,7 @@ public class AttendanceController {
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = studentAttendanceService
 				.setAttendanceForm(attendanceManagementDtoList);
-		
-		
+
 		model.addAttribute("attendanceForm", attendanceForm);
 
 		return "attendance/update";
@@ -138,6 +137,8 @@ public class AttendanceController {
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 			throws ParseException {
 
+		studentAttendanceService.formatConversion(attendanceForm);
+
 		// 更新
 		String message = studentAttendanceService.update(attendanceForm);
 		model.addAttribute("message", message);
@@ -148,13 +149,5 @@ public class AttendanceController {
 
 		return "attendance/detail";
 	}
-	
-//	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-//	public String notEnterCheck(Model model) throws ParseException {
-//		Boolean notEnterCount = studentAttendanceService.notEnterCheck();
-//		model.addAttribute("notEnterCount", notEnterCount);
-//		
-//		return "attendance/detail";
-//	}
 
 }
