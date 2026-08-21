@@ -27,7 +27,7 @@
 					<thead style="display: block;">
 						<tr>
 							<th class="w140">日付</th>
-							<th class="w300">コース内容</th>
+							<th class="w140">コース内容</th>
 							<th class="w60">定時</th>
 							<th class="w180" colspan="3">出勤</th>
 							<th class="w180" colspan="3">退勤</th>
@@ -54,7 +54,7 @@
 										th:value="${dailyAttendanceForm.statusDispName}" />
 								</th:block>
 								<td class="w140">[[${dailyAttendanceForm.dispTrainingDate}]]</td>
-								<td class="w300">[[${dailyAttendanceForm.sectionName}]]</td>
+								<td class="w140">[[${dailyAttendanceForm.sectionName}]]</td>
 
 								<td class="w60">
 									<input type="button" class="btn btn-success default-button onTime" value="定時" onclick="start_end_time(this)">
